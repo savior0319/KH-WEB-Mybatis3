@@ -1,0 +1,112 @@
+@ mybatis-config.xml에서 사용한 태그
+
+## <properties> 태그 ##
+-> 외부 java property 파일의 내용을 불러올 때 사용
+
+<properties resource="경로 + 파일명.properties">
+	<property name="key명" value="설정값">
+</properties>
+
+
+## <typeAliases> 태그 ##
+-> mybatis에서 자료형을 별칭으로 사용 할 떄 사용 하는 태그
+<typeAliases>
+	<typeAlias typle="org.kh.memeber.model.vo.Member" alias="Member">
+</typeAliases>
+
+## <environments> 태그 ##
+-> mybatis에서 연동할 DataBase 정보를 등록하는 태그
+-> environment 태그 안에는 항상 transactionManager 태그와 dataSource 태그가 있어야 함
+
+ex) JDBC
+
+<environments default="development">
+	<environment id="development">
+	<transactionManager type="JDBC" />
+		<dataSource type="POOLED">
+			<property name="driver" value="oracle.jdbc.driver.OracleDriver" />
+			<property name="url" value="jdbc:oracle:thin:@localhost:1521:xe" />
+			<property name="username" value="MYBATIS" />
+			<property name="password" value="MYBATIS" />
+		</dataSource>
+	</environment>
+</environments>
+
+## <mappers> 태그 ##
+-> 사용하고자 하는 쿼리가 정의된 mapper 파일을 등록하는 태그
+-> DataBase에 사용되는 쿼리문들을 담고 있는 파일들을 등록함
+
+<mappers>
+	<mapper resource="/mappers/member/member-mapper.xml" />
+</mappers>
+
+
+@ 동적 쿼리
+-> 일반적으로 검색 기능이나 다중 입력 처리 등을 수행해야 할 경우
+SQL을 실행하는 DAO를 여러번 호출하여 실행 하였지만 mybatis에서는 이를 동적으로 제어 할 수 있는 
+구문을 제공하여 좀 더 쉽게 쿼리를 구현 할 수 있도록 함
+
+## 동적 쿼리 지원 구문 종류 ##
+1. if
+2. choose
+3. trim
+4. foreach
+
+@ if 구문 
+-> 동적 쿼리를 구현 할 때 가장 기본적으로 사용되는 구문
+-> 특정 조건을 만족할 경우 안의 구문을 쿼리에 포함 시킴
+-> 필요로 하는 조건이 1개 이상일 시 if 구문을 여러개 사용 할 수도 있음
+
+ex)
+<if test="조건식">
+	...
+</if>
+
+@ choose 구문
+-> 자바의 if-else 혹은 switch, 오라클의 choose 구문과 매우 유사하며
+주어진 구문 중 한가지만 수행하고자 할 때 사용함
+-> when은 if, else if 문과 흡사하며 otherwise를 사용하여 else 구문 처럼(혹은 switch의 default) 사용 가능함
+
+ex)
+<choose>
+	<when test="조건식">
+	...
+	</when>
+	<when test="조건식">
+	...
+	</when>
+	<otherwise>
+	...
+	</otherwise>
+</choose>
+
+@ trim 구문
+-> trim은 쿼리 구문의 특정 부분을 없앨 때 사용 됨
+-> 태그 안의 내용이 완설 될 때 처음 시작할 단어와 시작 시 제거 해야 할 단어를 명시함
+
+ex)
+<trim prefix="WHERE" prefixOverrides="AND|OR">
+</trim>
+
+@ foreach 구문
+동적 쿼리를 구현 할 떄 collection에 대한 반복 처리를 제공함
+
+## foreach 속성 ##
+item : 반복 될 때 접근 가능한 객체 변수
+index : 반복되는 횟수를 가리키는 변수(횟수를 정하지 않았다면 생략 가능함)
+collection : 반복에 쓰일 Collection(array, list, map 등등..)
+separator : 반복되는 객체를 나열 할 때 구분하기 위한 구분자 ex) ','
+close : 마지막 반복 시 포함 할 닫는 문자열 ex) ')'
+
+ex)
+<select id="search" resultType="arraylist">
+	SELECT
+	BOARD_NO as boardNo,
+	BOARD_CONTENTS as boardContents,
+	BOARD_WRITER as boardWriter,
+	FROM BOARD
+	WHERE TITLE IN
+	<foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+		#{item}
+	</foreach>
+</select>	

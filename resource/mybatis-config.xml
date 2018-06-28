@@ -2,7 +2,9 @@
 <!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd" >
 <configuration>
 	<typeAliases>
-		<typeAlias typle="org.kh.users.model.vo.UserVo" alias="user">
+		<typeAlias type="org.kh.users.model.vo.UserVo" alias="user" />
+		<typeAlias type="org.kh.users.model.vo.CheckVo" alias="check" />
+		<typeAlias type="org.kh.users.model.vo.SearchVo" alias="search" />
 	</typeAliases>
 	<environments default="development">
 		<environment id="development">

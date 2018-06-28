@@ -1,4 +1,69 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper>
+<mapper namespace="users">
+	<select id="checkList" parameterType="check" resultType="user">
+		SELECT USER_NO AS userNo,
+		<if test="chId != null and chId.equals('on')">
+			USER_ID AS userId,
+		</if>
+		<if test="chPw != null and chPw.equals('on')">
+			USER_PW AS userPw,
+		</if>
+		<if test="chName != null and chName.equals('on')">
+			USER_NAME AS userName,
+		</if>
+		<if test="chAddr != null and chAddr.equals('on')">
+			USER_ADDR AS userAddr,
+		</if>
+		REG_DATE AS regDate
+		FROM USERTBL
+	</select>
+	<select id="searchList" parameterType="search" resultType="user">
+		SELECT USER_NO AS userNo,
+		USER_ID AS userId,
+		USER_PW AS userPw,
+		USER_NAME AS userName,
+		USER_ADDR AS userAddr,
+		REG_DATE AS regDate
+		FROM USERTBL
+		<choose>
+			<when test="select.equals('name')">
+				WHERE USER_NAME LIKE '%'||#{keyword}||'%'
+			</when>
+			<when test="select.equals('id')">
+				WHERE USER_ID LIKE '%'||#{keyword}||'%'
+			</when>
+		</choose>
+	</select>
+	<select id="search2List" parameterType="user" resultType="user">
+		SELECT USER_NO AS userNo,
+		USER_ID AS userId,
+		USER_PW AS userPw,
+		USER_NAME AS userName,
+		USER_ADDR AS userAddr,
+		REG_DATE AS regDate
+		FROM USERTBL
+		<trim prefix="WHERE" prefixOverrides="AND|OR">
+			<if test="userName != null and userName != ''">
+				USER_NAME LIKE '%'||#{userName}||'%'
+			</if>
+			<if test="userAddr != null and userAddr != ''">
+				AND USER_ADDR LIKE '%'||#{userAddr}||'%'
+			</if>
+		</trim>
+		<!-- prefix trim 안에 있는 조건들이 성립되면 쿼리문을 추가할 때 prefix에 있는 값이 자동으로 붙게 됨 -->
+	</select>
+	<select id="search3List" parameterType="user" resultType="user">
+		SELECT USER_NO AS userNo,
+		USER_ID AS userId,
+		USER_PW AS userPw,
+		USER_NAME AS userName,
+		USER_ADDR AS userAddr,
+		REG_DATE AS regDate
+		FROM USERTBL
+		WHERE USER_ADDR IN
+		<foreach item="addr" collection="array" open="(" separator="," close=")">
+		#{addr}
+		</foreach>
+	</select>
 </mapper>

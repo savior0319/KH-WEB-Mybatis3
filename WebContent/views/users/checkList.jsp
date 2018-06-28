@@ -1,18 +1,26 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta http-equiv="X-UA-Compatible" content="ie=edge">
-	<title>Document</title>
+	<title>체크된 유저 정보</title>
 </head>
 <body>
-	<h1>마이바티스 동적쿼리</h1>
-	<a href="/views/if_query.jsp">1. if</a><br>
-	<a href="/views/choose_query.jsp">2. choose</a><br>
-	<a href="/views/trim_query.jsp">3. trim</a><br>
-	<a href="/views/foreach_query.jsp">4. foreach</a><br> 
+
+<c:forEach items="${requestScope.list}" var="user">
+	${user.userNo}<br>
+	${user.userId}<br>
+	${user.userPw}<br>
+	${user.userName}<br>
+	${user.userAddr}<br>
+	${user.regDate}<br>
+	<hr>
+</c:forEach>
+
 </body>
 </html>
